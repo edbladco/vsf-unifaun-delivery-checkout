@@ -1,4 +1,4 @@
-import { UnifaunState } from '../types/State'
+import { UnifaunState } from '../types/UnifaunState'
 
 export const state: UnifaunState = {
   foo: '',

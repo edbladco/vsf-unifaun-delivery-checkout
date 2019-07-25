@@ -1,4 +1,4 @@
-import { UnifaunState } from '../types/State'
+import { UnifaunState } from '../types/UnifaunState'
 import { ActionTree, ActionContext, Store } from 'vuex'
 import RootState from '@vue-storefront/core/types/RootState'
 
