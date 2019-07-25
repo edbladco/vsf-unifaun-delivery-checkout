@@ -6,7 +6,7 @@ import { state } from './state'
 import { getters } from './getters'
 import { UnifaunState } from '../types/UnifaunState'
 
-export const module: Module<any, RootState> = {
+export const module: Module<UnifaunState, RootState> = {
   namespaced: true,
   state,
   mutations,

@@ -1,3 +1,3 @@
 export interface UnifaunState {
-  foo: string;
+  options: Array<any>
 }

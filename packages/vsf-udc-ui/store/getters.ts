@@ -1,11 +1,10 @@
 import { GetterTree } from 'vuex'
 import { UnifaunState } from '../types/UnifaunState'
 import RootState from '@vue-storefront/core/types/RootState'
-import config from 'config'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 
-export const getters: GetterTree<any, RootState> = {
-  shippingMethods (state, getters, rootState, rootGetters) {
+export const getters: GetterTree<UnifaunState, RootState> = {
+  shippingMethods (state: UnifaunState) {
     const shippingMethods = []
     state.options.forEach(option => {
       if (option.subOptions) {
@@ -39,5 +38,12 @@ export const getters: GetterTree<any, RootState> = {
       }
     })
     return shippingMethods
+  },
+  unifaunOptions () {
+    const defaultLanguage = currentStoreView().i18n.defaultLanguage
+    return {
+      language: defaultLanguage,
+      disabled: false
+    }
   }
 }
