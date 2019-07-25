@@ -14,7 +14,7 @@ import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 export default {
   async mounted () {
     if (!isServer) {
-      await this.renderUdc()
+      await this.fetchUdc()
       this.mapUnifaunShippingMethods()
     }
   },
@@ -36,7 +36,7 @@ export default {
     }
   },
   methods: {
-    async renderUdc () {
+    async fetchUdc () {
       const defaultLanguage = currentStoreView().i18n.defaultLanguage
       await loadScript('https://api.unifaun.com/rs-extapi/v1/delivery-checkouts-widget/unifaun-checkout-all.min.js', 'udc')
       this.widget = window.UnifaunCheckout.createAt(this.$refs.udc, {
@@ -56,39 +56,13 @@ export default {
       const json = await response.json()
       json.jsonPayload = JSON.parse(json.jsonPayload)
       this.widget.updateList(json)
+      this.$store.dispatch('unifaun-delivery-checkout/setOptions', this.widget.model.options)
     },
     mapUnifaunShippingMethods () {
-      this.widget.model.options.forEach(option => {
-        if (option.subOptions) {
-          option.subOptions.forEach(subOption => {
-            this.shippingMethods.push({
-              amount: subOption.priceValue || 0,
-              available: true,
-              base_amount: subOption.priceValue || 0,
-              carrier_code: subOption.carrierId || '',
-              carrier_title: subOption.description1,
-              error_message: '',
-              method_code: subOption.carrierId || '',
-              method_title: subOption.name,
-              price_excl_tax: subOption.priceValue || 0,
-              price_incl_tax: subOption.priceValue || 0
-            })
-          })
-        } else {
-          this.shippingMethods.push({
-            amount: option.priceValue || 0,
-            available: true,
-            base_amount: option.priceValue || 0,
-            carrier_code: option.carrierId || '',
-            carrier_title: option.description1,
-            error_message: '',
-            method_code: option.carrierId || '',
-            method_title: option.name,
-            price_excl_tax: option.priceValue || 0,
-            price_incl_tax: option.priceValue || 0
-          })
-        }
-      })
+      const shippingMethods = this.$store.getters['unifaun-delivery-checkout/shippingMethods']
+      console.log('udc store: ', this.$store)
+      console.log('udc shipping: ', shippingMethods)
+      this.$store.dispatch('shipping/replaceMethods', shippingMethods)
     }
   }
 }

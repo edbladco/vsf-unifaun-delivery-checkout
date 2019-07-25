@@ -1,8 +1,8 @@
 import { MutationTree } from 'vuex'
 import { UnifaunState } from '../types/UnifaunState'
 
-export const mutations: MutationTree<UnifaunState> = {
-  foo (state: UnifaunState, string) {
-    state.foo = string
+export const mutations: MutationTree<any> = {
+  setOptions (state: any, options) {
+    state.options = options
   }
 }

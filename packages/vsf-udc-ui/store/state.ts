@@ -1,5 +1,5 @@
 import { UnifaunState } from '../types/UnifaunState'
 
-export const state: UnifaunState = {
-  foo: '',
+export const state: any = {
+  widget: null
 }
