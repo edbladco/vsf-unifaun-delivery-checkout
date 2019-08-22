@@ -7,7 +7,7 @@ export const getters: GetterTree<UnifaunState, RootState> = {
   shippingMethods (state: UnifaunState) {
     const shippingMethods = []
     state.options.forEach(option => {
-      if (option.subOptions) {
+      if (option.subOptions.length > 0) {
         option.subOptions.forEach(subOption => {
           shippingMethods.push({
             amount: subOption.priceValue || 0,
