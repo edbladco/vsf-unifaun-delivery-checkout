@@ -1,3 +1,4 @@
 export interface UnifaunState {
-  options: Array<any>
+  options: Array<any>,
+  addressData: any
 }

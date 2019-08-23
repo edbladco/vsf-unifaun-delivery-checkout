@@ -11,7 +11,8 @@ export const actions: ActionTree<UnifaunState, RootState> = {
     const headers = new Headers()
     headers.set('Authorization', 'Basic ' + Buffer.from(username + ':' + password).toString('base64'))
     headers.set('Content-Type', 'application/json')
-    const response = await fetch(config.unifaun.endpoint, {
+    const url = getters.getUrl
+    const response = await fetch(url, {
       method: 'GET',
       headers
     })
@@ -19,5 +20,10 @@ export const actions: ActionTree<UnifaunState, RootState> = {
     widget.updateList(json)
     commit('setOptions', widget.model.options)
     dispatch('shipping/replaceMethods', getters.shippingMethods, { root: true })
+  },
+  async setShippingAddress ({ commit, getters, dispatch }, { data }) {
+    commit('setAddress', data)
+    const { addressData } = getters.setShippingAddress
+    console.log('udc addressdata: ', addressData)
   }
 }

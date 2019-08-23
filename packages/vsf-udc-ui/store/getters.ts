@@ -46,5 +46,18 @@ export const getters: GetterTree<UnifaunState, RootState> = {
       language: defaultLanguage,
       disabled: false
     }
+  },
+  setShippingAddress (state: UnifaunState) {
+    return state
+  },
+  getUrl (state: UnifaunState) {
+    let url = config.unifaun.endpoint
+    const language = currentStoreView().i18n.defaultLanguage
+    const currency = currentStoreView().i18n.currencyCode
+    const toCountry = config.unifaun.country_codes[state.addressData.country]
+    const zipCode = state.addressData.postal_code
+    url += `?language=${language}&currency=${currency}&tocountry=${toCountry}&tozipcode=${zipCode}`
+    console.log('udc getters url: ', url)
+    return url
   }
 }
