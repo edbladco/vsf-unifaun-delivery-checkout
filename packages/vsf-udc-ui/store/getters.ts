@@ -3,9 +3,10 @@ import { UnifaunState } from '../types/UnifaunState'
 import RootState from '@vue-storefront/core/types/RootState'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
 import config from 'config'
+import sumBy from 'lodash-es/sumBy'
 
 export const getters: GetterTree<UnifaunState, RootState> = {
-  shippingMethods (state: UnifaunState) {
+  getShippingMethods (state: UnifaunState) {
     const shippingMethods = []
     state.options.forEach(option => {
       if (option.subOptions && option.subOptions.length > 0) {
@@ -40,24 +41,56 @@ export const getters: GetterTree<UnifaunState, RootState> = {
     })
     return shippingMethods
   },
-  unifaunOptions () {
+  getUnifaunOptions () {
     const defaultLanguage = currentStoreView().i18n.defaultLanguage
     return {
       language: defaultLanguage,
       disabled: false
     }
   },
-  setShippingAddress (state: UnifaunState) {
-    return state
+  getShippingAddress (state: UnifaunState) {
+    return state.addressData
   },
-  getUrl (state: UnifaunState) {
+  getUrl (state: UnifaunState, getters) {
     let url = config.unifaun.endpoint
-    const language = currentStoreView().i18n.defaultLanguage
-    const currency = currentStoreView().i18n.currencyCode
-    const toCountry = config.unifaun.country_codes[state.addressData.country]
-    const zipCode = state.addressData.postal_code
-    url += `?language=${language}&currency=${currency}&tocountry=${toCountry}&tozipcode=${zipCode}`
-    console.log('udc getters url: ', url)
+    const {
+      totalWeight,
+      totalHeight,
+      totalWidth,
+      totalLength
+    } = getters.getValues
+    const shippingAddress = getters.getShippingAddress
+    const { 
+      defaultLanguage: language, 
+      currencyCode: currency 
+    } = currentStoreView().i18n
+    const toCountry = shippingAddress.country
+    const zipCode = shippingAddress.postal_code
+    url += `?language=${language}&currency=${currency}&tocountry=${toCountry}&tozipcode=${zipCode}&weight=${totalWeight}&height=${totalHeight}&width=${totalWidth}&length=${totalLength}`
     return url
+  },
+  getValues (state: UnifaunState, getters, rootState, rootGetters) {
+    const productWeightsAndDimensions = rootGetters['cart/items'].map((item) => ({
+      width: item.bex_ex_width || 0,
+      height: item.bex_ex_height || 0,
+      length: item.bex_ex_length || 0,
+      netWeight: item.bex_net_weight || 0,
+      grossWeight: item.bex_gross_weight || 0,
+      sku: item.sku
+    }))
+    const totalWeight = sumBy(productWeightsAndDimensions, 'grossWeight') / 1000
+    const totalWidth = sumBy(productWeightsAndDimensions, 'width')
+    const totalHeight = sumBy(productWeightsAndDimensions, 'height')
+    const totalLength = sumBy(productWeightsAndDimensions, 'length')
+    return {
+      productWeightsAndDimensions,
+      totalWeight,
+      totalWidth,
+      totalHeight,
+      totalLength
+    }
+  },
+  getValidation (state: UnifaunState) {
+    return state.validation
   }
 }

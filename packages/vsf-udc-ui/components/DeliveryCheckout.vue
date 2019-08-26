@@ -16,6 +16,7 @@ export default {
         if (data.postal_code) {
           console.log('udc we got postal code!')
           await this.$store.dispatch('unifaun-delivery-checkout/setShippingAddress', { data })
+          await this.$store.dispatch('unifaun-delivery-checkout/validateForPostNord')
           await loadScript('https://api.unifaun.com/rs-extapi/v1/delivery-checkouts-widget/unifaun-checkout-all.min.js', 'udc')
           await this.$store.dispatch('unifaun-delivery-checkout/loadUdc', { ref: this.$refs.udc, client: window.UnifaunCheckout })
         }

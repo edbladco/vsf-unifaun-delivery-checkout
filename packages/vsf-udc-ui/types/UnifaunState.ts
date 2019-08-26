@@ -1,4 +1,5 @@
 export interface UnifaunState {
   options: Array<any>,
-  addressData: any
+  addressData: any,
+  validation: Boolean
 }

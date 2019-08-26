@@ -5,7 +5,11 @@ import config from 'config'
 
 export const actions: ActionTree<UnifaunState, RootState> = {
   async loadUdc ({ commit, getters, dispatch }, { ref, client }) {
-    const widget = client.createAt(ref, getters.unifaunOptions)
+    if (!getters.getValidation) {
+      // Error validating
+      return
+    }
+    const widget = client.createAt(ref, getters.getUnifaunOptions)
     const username = config.unifaun.username
     const password = config.unifaun.password
     const headers = new Headers()
@@ -18,12 +22,44 @@ export const actions: ActionTree<UnifaunState, RootState> = {
     })
     const json = await response.json()
     widget.updateList(json)
-    commit('setOptions', widget.model.options)
-    dispatch('shipping/replaceMethods', getters.shippingMethods, { root: true })
+    commit('SET_OPTIONS', widget.model.options)
+    dispatch('shipping/replaceMethods', getters.getShippingMethods, { root: true })
   },
-  async setShippingAddress ({ commit, getters, dispatch }, { data }) {
-    commit('setAddress', data)
-    const { addressData } = getters.setShippingAddress
-    console.log('udc addressdata: ', addressData)
+  async setShippingAddress ({ commit }, { data }) {
+    data.country = config.unifaun.country_codes[data.country]
+    commit('SET_ADDRESS', data)
+  },
+  async validateForPostNord ({ commit, getters }) {
+    const { productWeightsAndDimensions } = getters.getValues
+    const { country } = getters.getShippingAddress
+    const validationRules = {
+      maxWeight: 2000,
+      maxHeight: 7,
+      maxWidth: 24,
+      maxLength: 34,
+      allowedCountries: [
+        'se',
+        'dk',
+        'gb',
+        'nl',
+        'fi',
+        'de',
+        'pl'
+      ]
+    }
+    const { totalWeight } = getters.getValues
+    if (totalWeight > validationRules.maxWeight) {
+      commit('SET_VALIDATION', false)
+      return
+    }
+    const validate = productWeightsAndDimensions.every((product) => {
+      return validationRules.maxHeight > product.height &&
+        validationRules.maxWidth > product.width &&
+        validationRules.maxLength > product.length &&
+        validationRules.allowedCountries.includes(country)
+    })
+    if (!validate) {
+      commit('SET_VALIDATION', false)
+    }
   }
 }
