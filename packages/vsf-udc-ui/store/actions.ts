@@ -5,10 +5,6 @@ import config from 'config'
 
 export const actions: ActionTree<UnifaunState, RootState> = {
   async loadUdc ({ commit, getters, dispatch }, { ref, client }) {
-    if (!getters.getValidation) {
-      // Error validating
-      return
-    }
     const widget = client.createAt(ref, getters.getUnifaunOptions)
     const username = config.unifaun.username
     const password = config.unifaun.password
@@ -52,6 +48,7 @@ export const actions: ActionTree<UnifaunState, RootState> = {
       commit('SET_VALIDATION', false)
       return
     }
+    console.log('udc validation products: ', productWeightsAndDimensions)
     const validate = productWeightsAndDimensions.every((product) => {
       return validationRules.maxHeight > product.height &&
         validationRules.maxWidth > product.width &&

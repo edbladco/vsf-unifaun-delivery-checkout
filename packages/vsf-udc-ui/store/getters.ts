@@ -66,17 +66,22 @@ export const getters: GetterTree<UnifaunState, RootState> = {
     } = currentStoreView().i18n
     const toCountry = shippingAddress.country
     const zipCode = shippingAddress.postal_code
+    if (!getters.getValidation) {
+      // Error validating
+      url += `?language=${language}&currency=${currency}&tocountry=${toCountry}&tozipcode=${zipCode}`
+      return url
+    }
     url += `?language=${language}&currency=${currency}&tocountry=${toCountry}&tozipcode=${zipCode}&weight=${totalWeight}&height=${totalHeight}&width=${totalWidth}&length=${totalLength}`
     return url
   },
   getValues (state: UnifaunState, getters, rootState, rootGetters) {
     const productWeightsAndDimensions = rootGetters['cart/items'].map((item) => ({
-      width: item.bex_ex_width || 0,
-      height: item.bex_ex_height || 0,
-      length: item.bex_ex_length || 0,
-      netWeight: item.bex_net_weight || 0,
-      grossWeight: item.bex_gross_weight || 0,
-      sku: item.sku
+      width: item.bex_ex_width * item.qty || 0,
+      height: item.bex_ex_height * item.qty || 0,
+      length: item.bex_ex_length * item.qty || 0,
+      netWeight: item.bex_net_weight * item.qty || 0,
+      grossWeight: item.bex_gross_weight * item.qty || 0,
+      sku: item.sku,
     }))
     const totalWeight = sumBy(productWeightsAndDimensions, 'grossWeight') / 1000
     const totalWidth = sumBy(productWeightsAndDimensions, 'width')
