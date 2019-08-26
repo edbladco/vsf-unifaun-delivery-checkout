@@ -14,7 +14,7 @@ export default {
     if (!isServer) {
       this.$bus.$on('kcoAddressChange', async (data) => {
         if (JSON.stringify(data) !== this.currentData) {
-          this.currentData = JSON.stringify(currentData)
+          this.currentData = JSON.stringify(data)
           await this.$store.dispatch('unifaun-delivery-checkout/setShippingAddress', { data })
           await this.$store.dispatch('unifaun-delivery-checkout/validateForPostNord')
           await loadScript('https://api.unifaun.com/rs-extapi/v1/delivery-checkouts-widget/unifaun-checkout-all.min.js', 'udc')
