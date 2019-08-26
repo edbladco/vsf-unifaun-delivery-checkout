@@ -12,9 +12,7 @@ export default {
   async mounted () {
     if (!isServer) {
       this.$bus.$on('kcoAddressChange', async (data) => {
-        console.log('udc kco data:', data)
         if (data.postal_code) {
-          console.log('udc we got postal code!')
           await this.$store.dispatch('unifaun-delivery-checkout/setShippingAddress', { data })
           await this.$store.dispatch('unifaun-delivery-checkout/validateForPostNord')
           await loadScript('https://api.unifaun.com/rs-extapi/v1/delivery-checkouts-widget/unifaun-checkout-all.min.js', 'udc')

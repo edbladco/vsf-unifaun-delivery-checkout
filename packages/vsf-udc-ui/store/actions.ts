@@ -48,7 +48,6 @@ export const actions: ActionTree<UnifaunState, RootState> = {
       commit('SET_VALIDATION', false)
       return
     }
-    console.log('udc validation products: ', productWeightsAndDimensions)
     const validate = productWeightsAndDimensions.every((product) => {
       return validationRules.maxHeight > product.height &&
         validationRules.maxWidth > product.width &&
