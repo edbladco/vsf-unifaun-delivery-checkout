@@ -9,10 +9,12 @@ import { loadScript } from '../helpers'
 import { isServer } from '@vue-storefront/core/helpers'
 
 export default {
-  async mounted () {
+  currentData: '',
+  beforeMount () {
     if (!isServer) {
       this.$bus.$on('kcoAddressChange', async (data) => {
-        if (data.postal_code) {
+        if (JSON.stringify(data) !== this.currentData) {
+          this.currentData = JSON.stringify(currentData)
           await this.$store.dispatch('unifaun-delivery-checkout/setShippingAddress', { data })
           await this.$store.dispatch('unifaun-delivery-checkout/validateForPostNord')
           await loadScript('https://api.unifaun.com/rs-extapi/v1/delivery-checkouts-widget/unifaun-checkout-all.min.js', 'udc')
@@ -20,6 +22,9 @@ export default {
         }
       })
     }
+  },
+  beforeDestroy () {
+    this.$bus.$off('kcoAddressChange')
   }
 }
 </script>
