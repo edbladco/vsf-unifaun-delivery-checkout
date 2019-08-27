@@ -54,10 +54,12 @@ export const getters: GetterTree<UnifaunState, RootState> = {
   getUrl (state: UnifaunState, getters) {
     let url = config.unifaun.endpoint
     const {
+      productWeightsAndDimensions,
       totalWeight,
       totalHeight,
       totalWidth,
-      totalLength
+      totalLength,
+      cartPrice
     } = getters.getValues
     const shippingAddress = getters.getShippingAddress
     const { 
@@ -68,10 +70,10 @@ export const getters: GetterTree<UnifaunState, RootState> = {
     const zipCode = shippingAddress.postal_code
     if (!getters.getValidation) {
       // Error validating
-      url += `?language=${language}&currency=${currency}&tocountry=${toCountry}&tozipcode=${zipCode}`
+      url += `?language=${language}&currency=${currency}&cartprice=${cartPrice}&tocountry=${toCountry}&tozipcode=${zipCode}`
       return url
     }
-    url += `?language=${language}&currency=${currency}&tocountry=${toCountry}&tozipcode=${zipCode}&weight=${totalWeight}&height=${totalHeight}&width=${totalWidth}&length=${totalLength}`
+    url += `?language=${language}&currency=${currency}&cartprice=${cartPrice}&tocountry=${toCountry}&tozipcode=${zipCode}&weight=${totalWeight}&height=${totalHeight}&width=${totalWidth}&length=${totalLength}`
     return url
   },
   getValues (state: UnifaunState, getters, rootState, rootGetters) {
@@ -87,12 +89,19 @@ export const getters: GetterTree<UnifaunState, RootState> = {
     const totalWidth = sumBy(productWeightsAndDimensions, 'width')
     const totalHeight = sumBy(productWeightsAndDimensions, 'height')
     const totalLength = sumBy(productWeightsAndDimensions, 'length')
+    let cartPrice = 0
+
+    if (rootGetters['cart/totals'].filter(segment => segment.code == 'subtotal').length > 0) {
+      cartPrice = rootGetters['cart/totals'].filter(segment => segment.code == 'subtotal')[0].value
+    }
+
     return {
       productWeightsAndDimensions,
       totalWeight,
       totalWidth,
       totalHeight,
-      totalLength
+      totalLength,
+      cartPrice
     }
   },
   getValidation (state: UnifaunState) {
