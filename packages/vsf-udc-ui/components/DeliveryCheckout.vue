@@ -9,7 +9,11 @@ import { loadScript } from '../helpers'
 import { isServer } from '@vue-storefront/core/helpers'
 
 export default {
-  currentData: '',
+  data () {
+    return {
+      currentData: ''
+    }
+  },
   beforeMount () {
     if (!isServer) {
       this.$bus.$on('kcoAddressChange', async (data) => {
