@@ -22,9 +22,11 @@ export const actions: ActionTree<UnifaunState, RootState> = {
     dispatch('shipping/replaceMethods', getters.getShippingMethods, { root: true })
   },
   async setShippingAddress ({ commit }, { data }) {
-    data.country = config.unifaun.country_codes[data.country]
     commit('SET_ADDRESS', data)
   },
+  /**
+   * The validation is only handled by Unifaun for now.
+   */
   async validateForPostNord ({ commit, getters }) {
     const { productWeightsAndDimensions } = getters.getValues
     const { country } = getters.getShippingAddress
