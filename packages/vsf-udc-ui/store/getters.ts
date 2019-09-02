@@ -61,19 +61,20 @@ export const getters: GetterTree<UnifaunState, RootState> = {
       totalLength,
       cartPrice
     } = getters.getValues
-    const shippingAddress = getters.getShippingAddress
+    const shippingAddress = getters.getShippingAddress.shippingAddress
     const { 
       defaultLanguage: language, 
       currencyCode: currency 
     } = currentStoreView().i18n
-    const toCountry = shippingAddress.country
-    const zipCode = shippingAddress.postal_code
-    if (!getters.getValidation) {
-      // Error validating
-      url += `?language=${language}&currency=${currency}&cartprice=${cartPrice}&tocountry=${toCountry}&tozipcode=${zipCode}`
-      return url
-    }
-    url += `?language=${language}&currency=${currency}&cartprice=${cartPrice}&tocountry=${toCountry}&tozipcode=${zipCode}&weight=${totalWeight}&height=${totalHeight}&width=${totalWidth}&length=${totalLength}`
+    const {
+      country,
+      postal_code: zipCode,
+      street_address: streetAddress,
+      city,
+      phone,
+      email
+    } = shippingAddress
+    url += `?language=${language}&currency=${currency}&cartprice=${cartPrice}&tocountry=${country}&tozipcode=${zipCode}&tocity=${city}&tostreet=${streetAddress}&tosms=${phone}&toemail=${email}&weight=${totalWeight}&height=${totalHeight}&width=${totalWidth}&length=${totalLength}`
     return url
   },
   getValues (state: UnifaunState, getters, rootState, rootGetters) {
