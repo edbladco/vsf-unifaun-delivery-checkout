@@ -18,7 +18,7 @@ export const actions: ActionTree<UnifaunState, RootState> = {
     })
     const json = await response.json()
     widget.updateList(json)
-    commit('SET_OPTIONS', widget.model.options)
+    commit('SET_SHIPPING_OPTIONS', widget.model.options)
     dispatch('shipping/replaceMethods', getters.getShippingMethods, { root: true })
   },
   async setShippingAddress ({ commit }, { data }) {
