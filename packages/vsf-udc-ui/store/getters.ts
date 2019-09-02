@@ -61,7 +61,7 @@ export const getters: GetterTree<UnifaunState, RootState> = {
       totalLength,
       cartPrice
     } = getters.getValues
-    const shippingAddress = getters.getShippingAddress.shippingAddress
+    const { shippingAddress } = getters.getShippingAddress
     const { 
       defaultLanguage: language, 
       currencyCode: currency 
