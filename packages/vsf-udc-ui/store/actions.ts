@@ -4,8 +4,7 @@ import RootState from '@vue-storefront/core/types/RootState'
 import config from 'config'
 
 export const actions: ActionTree<UnifaunState, RootState> = {
-  async loadUdc ({ commit, getters, dispatch }, { ref, client }) {
-    const widget = client.createAt(ref, getters.getUnifaunOptions)
+  async loadUdc ({ commit, getters, dispatch, rootState }) {
     const username = config.unifaun.username
     const password = config.unifaun.password
     const headers = new Headers()
@@ -17,8 +16,7 @@ export const actions: ActionTree<UnifaunState, RootState> = {
       headers
     })
     const json = await response.json()
-    widget.updateList(json)
-    commit('SET_SHIPPING_OPTIONS', widget.model.options)
+    commit('SET_SHIPPING_OPTIONS', json.options)
     dispatch('shipping/replaceMethods', getters.getShippingMethods, { root: true })
   },
   async setShippingAddress ({ commit }, { data }) {

@@ -1,11 +1,8 @@
 <template>
-  <div>
-    <div ref="udc" class="udc-widget" />
-  </div>
+  <div/>
 </template>
 
 <script>
-import { loadScript } from '../helpers'
 import { isServer } from '@vue-storefront/core/helpers'
 
 export default {
@@ -20,22 +17,15 @@ export default {
         if (JSON.stringify(data) !== this.currentData) {
           this.currentData = JSON.stringify(data)
           await this.$store.dispatch('unifaun-delivery-checkout/setShippingAddress', { data })
-          await loadScript('https://api.unifaun.com/rs-extapi/v1/delivery-checkouts-widget/unifaun-checkout-all.min.js', 'udc')
-          await this.$store.dispatch('unifaun-delivery-checkout/loadUdc', { ref: this.$refs.udc, client: window.UnifaunCheckout })
+          await this.$store.dispatch('unifaun-delivery-checkout/loadUdc')
+          this.$bus.$emit('updateKlarnaOrder')
         }
       })
     }
   },
   beforeDestroy () {
     this.$bus.$off('kcoAddressChange')
+    this.$bus.$off('updateKlarnaOrder')
   }
 }
 </script>
-
-<style lang="scss" scoped>
-@import '~theme/css/variables/variables';
-
-.udc-widget {
-  display: none;
-}
-</style>
